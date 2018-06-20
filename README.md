@@ -17,7 +17,7 @@ But really it's an analogous approach - much like how we use the derivative of a
 
 Luckily for us, we already did the hard work of deriving these formulas.  Now we get to see the fruits of our labor.  The following formulas tell us how to update regression variables of $m$ and $b$ to approach a "best fit" line.   
 
-* $ \frac{dJ}{dm}J(m,b) = -2\sum_{i = 1}^n x(y_i - (mx_i + b)) = -2\sum_{i = 1}^n x_i*\epsilon_i$ 
+* $ \frac{dJ}{dm}J(m,b) = -2\sum_{i = 1}^n x(y_i - (mx_i + b)) = -2\sum_{i = 1}^n x_i*\epsilon_i$
 * $ \frac{dJ}{db}J(m,b) = -2\sum_{i = 1}^n(y_i - (mx_i + b)) = -2\sum_{i = 1}^n \epsilon_i $
 
 The formulas above tell us to take some dataset, with values of $x$ and $y$, and then given a regression formula with values $m$ and $b$, iterate through our dataset, and use the formulas to calculate updates for $m$ and $b$.  Ultimately, to descend along the cost function, we will use the following calculations:
@@ -48,7 +48,7 @@ m_current = 0
 
 #amount to update our variables for our next step
 update_to_b = 0
-update_to_m = 0 
+update_to_m = 0
 
 def error_at(point, b, m):
     return (m*point['x'] + b - point['y'])
@@ -63,15 +63,15 @@ new_m = m_current - update_to_m
 
 In the last two lines of the code above, we calculate our `new_b` and `new_m` values by updating our taking our current values and adding our respective updates.  We define a function called `error_at`, which we can use in the error component of our partial derivatives above.
 
-The code above represents just one update to our regression line, and therefore just one step towards our best fit line.  We'll repeat the process to take multiple steps, but first we need to make a few more changes. 
+The code above represents just one update to our regression line, and therefore just one step towards our best fit line.  We'll repeat the process to take multiple steps, but first we need to make a few more changes.
 
-### Tweaking our approach 
+### Tweaking our approach
 
 The code above is very close to what we want, but we still need to make a few tweaks.
 
 The first problem becomes clear when we think about what these formulas actually do. As of now, we are changing the $m$ and $b$ variables by at least the sum of all of the errors based upon our line's predictions relative to our actual data.  Our line would change drastically at every iteration through the formulas.  We need to apply a learning rate to each of these partial derivates to ensure that we avoid drastically updating our regression line with each step.  As we have seen before, the learning rate is just a small number, like $.0001$ which controls the amount with which we update the regression line.  The learning rate is  represented by the Greek letters eta, $\eta$, or alpha $\alpha$.  We'll use eta, so $\eta = .0001$ means that our learning rate is $.0001$.
 
-Rememver that the gradient,  $ \nabla J(m,b)$, steers us in the correct direction.  In other words, our derivatives ensure we are making the correct **proportional** changes to $m$ and $b$.  Applying a learning rate to scale down changes to our regression line works fine, as long as the proportion and direction of the move remains the same.  While were at it, we need not multiply our partials by 2.  Again, we're in good shape so long as our changes are proportional.
+Remember that the gradient,  $ \nabla J(m,b)$, steers us in the correct direction.  In other words, our derivatives ensure we are making the correct **proportional** changes to $m$ and $b$.  Applying a learning rate to scale down changes to our regression line works fine, as long as the proportion and direction of the move remains the same.  While were at it, we need not multiply our partials by 2.  Again, we're in good shape so long as our changes are proportional.
 
 ![](./regression-scatter.png)
 
@@ -83,12 +83,12 @@ Making these changes, our formula looks like the following:
 ```python
 #amount to update our variables for our next step
 update_to_b = 0
-update_to_m = 0 
+update_to_m = 0
 
 learning_rate = .0001
 n = len(shows)
 for i in range(0, n):
-    
+
     update_to_b += -(1/n)*(error_at(shows[i], b_current, m_current))
     update_to_m += -(1/n)*(error_at(shows[i], b_current, m_current)*shows[i]['x'])
 
@@ -100,7 +100,7 @@ Our code now reflects what we know about the gradient descent process.  We start
 
 ### Seeing our gradient descent formulas in action
 
-As mentioned earlier, the code above represents just one update to our regression line, and therefore just one step towards our best fit line.  To take multiple steps, we wrap the process we want to repeat in a function so we can call it as much as we want.  We'll call this function `step_gradient`. 
+As mentioned earlier, the code above represents just one update to our regression line, and therefore just one step towards our best fit line.  To take multiple steps, we wrap the process we want to repeat in a function so we can call it as much as we want.  We'll call this function `step_gradient`.
 
 
 ```python
@@ -170,7 +170,7 @@ As you can see, our $m$ and $b$ values both update with each step.  Notice that 
 
 ###  Animating these changes
 
-We can use Plotly to visualize these changes to our regression line.  We'll write a method called `to_line` that takes a dictionary of $m$ and $b$ variables and produces a line object for each pair.  We can then see our line changes over time. 
+We can use Plotly to visualize these changes to our regression line.  We'll write a method called `to_line` that takes a dictionary of $m$ and $b$ variables and produces a line object for each pair.  We can then see our line changes over time.
 
 
 ```python
@@ -213,9 +213,9 @@ As you can see, our regression line starts off far away from our best fit.  But 
 
 ### Summary
 
-In this section, we saw our gradient descent formulas in action.  The core of the gradient descent functions are understanding the two lines: 
+In this section, we saw our gradient descent formulas in action.  The core of the gradient descent functions are understanding the two lines:
 
 $$ \frac{dJ}{dm}J(m,b) = -2\sum_{i = 1}^n x(y_i - (mx_i + b)) = -2\sum_{i = 1}^n x_i*\epsilon_i$$
 $$ \frac{dJ}{db}J(m,b) = -2\sum_{i = 1}^n(y_i - (mx_i + b)) = -2\sum_{i = 1}^n \epsilon_i $$
-    
+
 Which both look to the errors of the current regression line for our dataset to determine how to update the regression line next.  These formulas came from our cost function, $J(m,b) = \sum_{i = 1}^n(y_i - (mx_i + b))^2 $, and using the gradient to find the direction of steepest descent.  We translated theses formulas into code so we could visualize our regression line as it continued to improve its alignment with the data.  
